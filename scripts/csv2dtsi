@@ -1,0 +1,54 @@
+#! /bin/bash
+IRQ_OFFSET=16
+
+dtnode_address(){
+	printf "#define %s_REG_ADDRESS 0x%08x\n" "$1" "$2"
+	if [ "$3" ]; then
+		printf "#define %s_REG_SIZE 0x%08x\n" "$1" "$3"
+	fi
+	printf "#define %s_UNIT_ADDRESS %x\n" "$1" "$2"
+}
+
+handle_constant(){
+	local value
+	if [[ "$1" == config_* || "$1" == ethmac_* ]]; then
+		if [ "$2" = "None" ]; then
+			value=""
+		else
+			value="$2"
+		fi
+		printf "#define %s %s\n" "$(echo "$1" | tr a-z A-Z)" "$value"
+	elif [[ "$1" == *_interrupt ]]; then
+		printf "#define %s %d\n" "$(echo "$1" | tr a-z A-Z)" "$(expr "$2" + "$IRQ_OFFSET")"
+	fi
+}
+
+handle_memory_region(){
+	case "$1" in
+	main_ram|plic|clint)
+		dtnode_address "$(echo "$1" | tr a-z A-Z)" "$value" "$size"
+		;;
+	ethmac)
+		# There's a CSR block called ethmac too
+		dtnode_address ETHMAC_SRAM "$value" "$size"
+		;;
+	esac
+}
+
+handle_csr_base(){
+	dtnode_address "$(echo "$1" | tr a-z A-Z)" "$2"
+}
+
+while IFS=, read type name value size flags; do
+	case "$type" in
+	csr_base)
+		handle_csr_base "$name" "$value"
+		;;
+	constant)
+		handle_constant "$name" "$value"
+		;;
+	memory_region)
+		handle_memory_region "$name" "$value" "$size"
+		;;
+	esac
+done

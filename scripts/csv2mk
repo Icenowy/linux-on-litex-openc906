@@ -1,0 +1,11 @@
+#! /bin/bash
+
+while IFS=, read type name value size flags; do
+	case "$type" in
+	memory_region)
+		if [ "$name" = "main_ram" ]; then
+			printf "MAIN_RAM_BASE := 0x%x\n" "$value"
+		fi
+		;;
+	esac
+done

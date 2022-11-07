@@ -2,6 +2,11 @@
 
 while IFS=, read type name value size flags; do
 	case "$type" in
+	csr_base)
+		if [ "$name" = "uart" ]; then
+			printf "UART_BASE := 0x%x\n" "$value"
+		fi
+		;;
 	memory_region)
 		if [ "$name" = "main_ram" ]; then
 			printf "MAIN_RAM_BASE := 0x%x\n" "$value"

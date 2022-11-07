@@ -1,0 +1,51 @@
+#define LITEX_INTERRUPT_PROPERTY 4 /* IRQ_TYPE_LEVEL_HIGH */
+
+/ {
+	cpus {
+		timebase-frequency = <CONFIG_CLOCK_FREQUENCY>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatible = "thead,c906", "riscv";
+			riscv,isa = "rv64imafdc_zicsr_zifencei_xthead";
+			mmu-type = "riscv,sv39";
+			reg = <0>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+			i-cache-size = <32768>;
+			i-cache-sets = <4>;
+			i-cache-line-size = <64>;
+			d-cache-size = <32768>;
+			d-cache-sets = <2>;
+			d-cache-line-size = <64>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu0_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				interrupt-controller;
+				compatible = "riscv,cpu-intc";
+			};
+		};
+	};
+
+	soc {
+		interrupt-parent = <&plic>;
+
+		plic: interrupt-controller@PLIC_UNIT_ADDRESS {
+			compatible = "thead,openc906-plic", "thead,c900-plic";
+			reg = <PLIC_REG_ADDRESS PLIC_REG_SIZE>;
+			#interrupt-cells = <2>;
+			#address-cells = <0>;
+			interrupt-controller;
+			interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>;
+			riscv,ndev = <255>;
+		};
+
+		clint: clint@CLINT_UNIT_ADDRESS {
+			compatible = "thead,openc906-clint", "thead,c900-clint";
+			interrupts-extended = <&cpu0_intc 3 &cpu0_intc 7>;
+			reg = <CLINT_REG_ADDRESS CLINT_REG_SIZE>;
+		};
+	};
+};

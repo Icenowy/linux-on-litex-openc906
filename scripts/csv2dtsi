@@ -1,5 +1,5 @@
 #! /bin/bash
-IRQ_OFFSET=16
+IRQ_OFFSET=0
 
 dtnode_address(){
 	printf "#define %s_REG_ADDRESS 0x%08x\n" "$1" "$2"
@@ -8,6 +8,8 @@ dtnode_address(){
 	fi
 	printf "#define %s_UNIT_ADDRESS %x\n" "$1" "$2"
 }
+
+sys_clk_freq=0
 
 handle_constant(){
 	local value
@@ -20,6 +22,16 @@ handle_constant(){
 		printf "#define %s %s\n" "$(echo "$1" | tr a-z A-Z)" "$value"
 	elif [[ "$1" == *_interrupt ]]; then
 		printf "#define %s %d\n" "$(echo "$1" | tr a-z A-Z)" "$(expr "$2" + "$IRQ_OFFSET")"
+	fi
+
+	if [ "$1" = "config_clock_frequency" ]; then
+		sys_clk_freq="$2"
+	fi
+
+	if [ "$1" = "config_cpu_type_openc906" ]; then
+		IRQ_OFFSET=16
+	elif [ "$1" = "config_cpu_type_rocket" ]; then
+		printf "#define TIMEBASE_FREQUENCY %d\n" "$(expr "$sys_clk_freq" / 100)"
 	fi
 }
 

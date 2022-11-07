@@ -13,9 +13,21 @@ staging/csr.dtsi: $(CSR_CSV)
 	mkdir -p staging
 	scripts/csv2dtsi < $(CSR_CSV) > $@
 
-staging/linux-on-litex.dtb: linux-on-litex.dts staging/csr.dtsi
+CONSOLE ?= liteuart
+ROOT ?= /dev/mmcblk0p2
+
+ifeq ($(CONSOLE),liteuart)
+	CONSOLE_ARGS ?= console=liteuart earlycon=liteuart,$(UART_BASE)
+endif
+ifneq ($(ROOT),)
+	ROOT_ARGS = root=$(ROOT)
+endif
+
+BOOTARGS ?= $(CONSOLE_ARGS) $(ROOT_ARGS)
+
+staging/linux-on-litex.dtb: linux-on-litex.dts staging/csr.dtsi $(wildcard dtsi/*.dtsi)
 	mkdir -p staging
-	gcc -E -x assembler-with-cpp -nostdinc -undef -D__DTS__ -include staging/csr.dtsi - < linux-on-litex.dts | dtc -I dts -O dtb > $@
+	gcc -E -x assembler-with-cpp -nostdinc -undef -D__DTS__ -DBOOTARGS="\"$(BOOTARGS)\"" -include staging/csr.dtsi - < linux-on-litex.dts | dtc -I dts -O dtb > $@
 
 .PHONY: build-opensbi
 opensbi/build/platform/generic/firmware/fw_payload.bin: staging/linux-on-litex.dtb

@@ -2,3 +2,7 @@
 	path = opensbi
 	url = https://github.com/Icenowy/opensbi.git
 	branch = c900-clint
+[submodule "linux"]
+	path = linux
+	url = https://github.com/Icenowy/linux.git
+	branch = openc906-litex

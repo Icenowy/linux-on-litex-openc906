@@ -18,6 +18,10 @@
 #ifdef BOOTARGS
 		bootargs = BOOTARGS;
 #endif
+#if defined(INITRD_BASE) && defined(INITRD_END)
+		linux,initrd-start = <INITRD_BASE>;
+		linux,initrd-end = <INITRD_END>;
+#endif
 	};
 
 	aliases {

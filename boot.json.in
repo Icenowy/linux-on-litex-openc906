@@ -1,3 +1,5 @@
 {
-	"fw_payload.bin" : "@OPENSBI_ADDR@"
+	"Image" : "@KERNEL_ADDR@",
+	"initrd.img" : "@INITRD_ADDR@",
+	"fw_jump.bin" : "@OPENSBI_ADDR@"
 }

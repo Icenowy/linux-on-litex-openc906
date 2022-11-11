@@ -31,6 +31,7 @@
 
 	soc {
 		interrupt-parent = <&plic>;
+		dma-noncoherent;
 
 		plic: interrupt-controller@PLIC_UNIT_ADDRESS {
 			compatible = "thead,openc906-plic", "thead,c900-plic";

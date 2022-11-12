@@ -79,8 +79,8 @@
 #if defined(ETHPHY_REG_ADDRESS) && defined(ETHMAC_REG_ADDRESS)
 		mac0: mac@ETHMAC_UNIT_ADDRESS {
 			compatible = "litex,liteeth";
-			reg = <ETHMAC_REG_ADDRESS 0x7c>,
-			      <ETHPHY_REG_ADDRESS 0x0a>,
+			reg = <ETHMAC_REG_ADDRESS 0x100>,
+			      <ETHPHY_REG_ADDRESS 0x100>,
 			      <ETHMAC_SRAM_REG_ADDRESS ETHMAC_SRAM_REG_SIZE>;
 			reg-names = "mac", "mdio", "buffer";
 			litex,rx-slots = <ETHMAC_RX_SLOTS>;

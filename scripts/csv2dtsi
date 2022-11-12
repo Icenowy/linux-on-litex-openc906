@@ -13,7 +13,7 @@ sys_clk_freq=0
 
 handle_constant(){
 	local value
-	if [[ "$1" == *_interrupt ]]; then
+	if [[ "$1" == *_interrupt && "$1" != config_* ]]; then
 		printf "#define %s %d\n" "$(echo "$1" | tr a-z A-Z)" "$(expr "$2" + "$IRQ_OFFSET")"
 	elif [[ "$1" == config_* || "$1" == ethmac_* ]]; then
 		if [ "$2" = "None" ]; then

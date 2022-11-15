@@ -37,9 +37,11 @@ BOOTARGS ?= $(CONSOLE_ARGS) $(ROOT_ARGS)
 
 staging/linux-on-litex.dtb: linux-on-litex.dts staging/csr.dtsi $(wildcard dtsi/*.dtsi)
 	mkdir -p staging
-	gcc -E -x assembler-with-cpp -nostdinc -undef -D__DTS__ -DBOOTARGS="\"$(BOOTARGS)\"" $(INITRD_DEFINES) -include staging/csr.dtsi - < linux-on-litex.dts | dtc -I dts -O dtb > $@
+	gcc -E -x assembler-with-cpp -nostdinc -undef -D__DTS__ -DBOOTARGS="\"$(BOOTARGS)\"" $(INITRD_DEFINES) -include staging/csr.dtsi - < linux-on-litex.dts > staging/linux-on-litex.dts
+	dtc -I dts -O dtb < staging/linux-on-litex.dts > $@
 
 opensbi/build/platform/generic/firmware/fw_jump.bin: staging/linux-on-litex.dtb
+	rm -rf opensbi/build
 	$(MAKE) -C opensbi PLATFORM=generic CROSS_COMPILE="$(CROSS_COMPILE)" FW_FDT_PATH="$(PWD)"/staging/linux-on-litex.dtb FW_TEXT_START=$(MAIN_RAM_BASE) FW_JUMP_ADDR=$(KERNEL_BASE)
 
 linux/arch/riscv/boot/Image: linux-config

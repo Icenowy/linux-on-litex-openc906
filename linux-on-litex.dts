@@ -3,6 +3,9 @@
 #ifdef CONFIG_CPU_TYPE_OPENC906
 #include "dtsi/openc906.dtsi"
 #endif
+#ifdef CONFIG_CPU_TYPE_ROCKET
+#include "dtsi/rocket.dtsi"
+#endif
 
 #ifndef LITEX_INTERRUPT_PROPERTY
 #define LITEX_INTERRUPT_PROPERTY

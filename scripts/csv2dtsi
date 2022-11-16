@@ -31,6 +31,7 @@ handle_constant(){
 	if [ "$1" = "config_cpu_type_openc906" ]; then
 		IRQ_OFFSET=16
 	elif [ "$1" = "config_cpu_type_rocket" ]; then
+		IRQ_OFFSET=1
 		printf "#define TIMEBASE_FREQUENCY %d\n" "$(expr "$sys_clk_freq" / 100)"
 	fi
 }

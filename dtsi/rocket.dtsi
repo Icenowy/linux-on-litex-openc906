@@ -1,6 +1,41 @@
 #if !defined(CONFIG_CPU_VARIANT_FULL) && !defined(CONFIG_CPU_VARIANT_FULLD) && \
-    !defined(CONFIG_CPU_VARIANT_FULLQ) && !defined(CONFIG_CPU_VARIANT_FULLO)
-#error Unsupported Rocket variant
+    !defined(CONFIG_CPU_VARIANT_FULLQ) && !defined(CONFIG_CPU_VARIANT_FULLO) && \
+    !defined(CONFIG_CPU_VARIANT_FULL4D) && !defined(CONFIG_CPU_VARIANT_FULL4Q) && \
+    !defined(CONFIG_CPU_VARIANT_FULL4O) && !defined(CONFIG_CPU_VARIANT_FULL8O)
+	#error Unsupported Rocket variant
+#endif
+
+#if defined(CONFIG_CPU_VARIANT_FULL) || defined(CONFIG_CPU_VARIANT_FULLD) || \
+    defined(CONFIG_CPU_VARIANT_FULLQ) || defined(CONFIG_CPU_VARIANT_FULLO) || \
+    defined(CONFIG_CPU_VARIANT_FULL4D) || defined(CONFIG_CPU_VARIANT_FULL4Q) || \
+    defined(CONFIG_CPU_VARIANT_FULL4O) || defined(CONFIG_CPU_VARIANT_FULL8O)
+	#define ROCKET_PARAMS d-cache-block-size = <64>; \
+			      d-cache-sets = <64>; \
+			      d-cache-size = <16384>; \
+			      d-tlb-sets = <1>; \
+			      d-tlb-size = <32>; \
+			      device_type = "cpu"; \
+			      hardware-exec-breakpoint-count = <1>; \
+			      i-cache-block-size = <64>; \
+			      i-cache-sets = <64>; \
+			      i-cache-size = <16384>; \
+			      i-tlb-sets = <1>; \
+			      i-tlb-size = <32>; \
+			      mmu-type = "riscv,sv39"; \
+			      riscv,pmpgranularity = <4>; \
+			      riscv,pmpregions = <8>; \
+			      tlb-split; \
+			      riscv,isa = "rv64imafdch_zicsr_zifencei"
+#endif
+
+#if defined(CONFIG_CPU_VARIANT_FULL) || defined(CONFIG_CPU_VARIANT_FULLD) || \
+    defined(CONFIG_CPU_VARIANT_FULLQ) || defined(CONFIG_CPU_VARIANT_FULLO)
+	#define ROCKET_CORES 1
+#elif defined(CONFIG_CPU_VARIANT_FULL4D) || defined(CONFIG_CPU_VARIANT_FULL4Q) || \
+      defined(CONFIG_CPU_VARIANT_FULL4O)
+	#define ROCKET_CORES 4
+#elif defined(CONFIG_CPU_VARIANT_FULL8O)
+	#define ROCKET_CORES 8
 #endif
 
 / {
@@ -11,31 +46,12 @@
 
 		cpu0: cpu@0 {
 			compatible = "sifive,rocket0", "riscv";
-			d-cache-block-size = <64>;
-			d-cache-sets = <64>;
-			d-cache-size = <16384>;
-			d-tlb-sets = <1>;
-			d-tlb-size = <32>;
-			device_type = "cpu";
-			hardware-exec-breakpoint-count = <1>;
-			i-cache-block-size = <64>;
-			i-cache-sets = <64>;
-			i-cache-size = <16384>;
-			i-tlb-sets = <1>;
-			i-tlb-size = <32>;
+			ROCKET_PARAMS;
+			reg = <0x0>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
 #ifdef CONFIG_L2_SIZE
 			next-level-cache = <&l2cache>;
 #endif
-			mmu-type = "riscv,sv39";
-			reg = <0x0>;
-#if defined(CONFIG_CPU_VARIANT_FULL) || defined(CONFIG_CPU_VARIANT_FULLD) || \
-    defined(CONFIG_CPU_VARIANT_FULLQ) || defined(CONFIG_CPU_VARIANT_FULLO)
-			riscv,isa = "rv64imafdch_zicsr_zifencei";
-#endif
-			riscv,pmpgranularity = <4>;
-			riscv,pmpregions = <8>;
-			tlb-split;
-			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
 
 			cpu0_intc: interrupt-controller {
 				#interrupt-cells = <1>;
@@ -43,6 +59,131 @@
 				interrupt-controller;
 			};
 		};
+
+#if ROCKET_CORES >= 2
+		cpu1: cpu@1 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x1>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu1_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
+
+#if ROCKET_CORES >= 3
+		cpu2: cpu@2 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x2>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu2_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
+
+#if ROCKET_CORES >= 4
+		cpu3: cpu@3 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x3>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu3_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
+
+#if ROCKET_CORES >= 5
+		cpu4: cpu@4 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x4>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu4_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
+
+#if ROCKET_CORES >= 6
+		cpu5: cpu@5 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x5>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu5_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
+
+#if ROCKET_CORES >= 7
+		cpu6: cpu@6 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x6>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu6_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
+#if ROCKET_CORES >= 8
+		cpu7: cpu@7 {
+			compatible = "sifive,rocket0", "riscv";
+			ROCKET_PARAMS;
+			reg = <0x7>;
+			clock-frequency = <CONFIG_CLOCK_FREQUENCY>;
+#ifdef CONFIG_L2_SIZE
+			next-level-cache = <&l2cache>;
+#endif
+
+			cpu7_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+#endif
 	};
 
 	soc {
@@ -50,7 +191,29 @@
 
 		clint: clint@2000000 {
 			compatible = "sifive,clint0";
-			interrupts-extended = <&cpu0_intc 3 &cpu0_intc 7>;
+			interrupts-extended = <&cpu0_intc 3 &cpu0_intc 7
+#if ROCKET_CORES >= 2
+					       &cpu1_intc 3 &cpu1_intc 7
+#endif
+#if ROCKET_CORES >= 3
+					       &cpu2_intc 3 &cpu2_intc 7
+#endif
+#if ROCKET_CORES >= 4
+					       &cpu3_intc 3 &cpu3_intc 7
+#endif
+#if ROCKET_CORES >= 5
+					       &cpu4_intc 3 &cpu4_intc 7
+#endif
+#if ROCKET_CORES >= 6
+					       &cpu5_intc 3 &cpu5_intc 7
+#endif
+#if ROCKET_CORES >= 7
+					       &cpu6_intc 3 &cpu6_intc 7
+#endif
+#if ROCKET_CORES >= 8
+					       &cpu7_intc 3 &cpu7_intc 7
+#endif
+					      >;
 			reg = <0x2000000 0x10000>;
 		};
 
@@ -58,7 +221,29 @@
 			#interrupt-cells = <1>;
 			compatible = "sifive,plic-1.0.0";
 			interrupt-controller;
-			interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>;
+			interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9
+#if ROCKET_CORES >= 2
+					       &cpu1_intc 11 &cpu1_intc 9
+#endif
+#if ROCKET_CORES >= 3
+					       &cpu2_intc 11 &cpu2_intc 9
+#endif
+#if ROCKET_CORES >= 4
+					       &cpu3_intc 11 &cpu3_intc 9
+#endif
+#if ROCKET_CORES >= 5
+					       &cpu4_intc 11 &cpu4_intc 9
+#endif
+#if ROCKET_CORES >= 6
+					       &cpu5_intc 11 &cpu5_intc 9
+#endif
+#if ROCKET_CORES >= 7
+					       &cpu6_intc 11 &cpu6_intc 9
+#endif
+#if ROCKET_CORES >= 8
+					       &cpu7_intc 11 &cpu7_intc 9
+#endif
+					      >;
 			reg = <0xc000000 0x4000000>;
 			riscv,max-priority = <7>;
 			riscv,ndev = <8>;

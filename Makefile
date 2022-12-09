@@ -23,6 +23,8 @@ ifneq ($(ROOT),)
 	ROOT_ARGS = root=$(ROOT)
 endif
 
+EXTRA_ARGS ?=
+
 INITRD ?= $(wildcard initrd.img)
 
 ifneq ($(INITRD),)
@@ -33,7 +35,7 @@ endif
 
 KERNEL_BASE = $(shell printf "0x%X" $$(($(MAIN_RAM_BASE) + 0x200000)))
 
-BOOTARGS ?= $(CONSOLE_ARGS) $(ROOT_ARGS)
+BOOTARGS ?= $(CONSOLE_ARGS) $(ROOT_ARGS) $(EXTRA_ARGS)
 
 staging/linux-on-litex.dtb: linux-on-litex.dts staging/csr.dtsi $(wildcard dtsi/*.dtsi)
 	mkdir -p staging
